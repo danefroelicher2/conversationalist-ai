@@ -68,12 +68,25 @@ class DatabaseService:
             print(f"❌ Failed to get user: {e}")
             return None
 
-    def create_conversation(self, user_id: str, user_input: str, ai_response: str = None) -> str:
+    def update_user_last_seen(self, user_id: str):
         try:
             cur = self.conn.cursor()
             cur.execute(
-                "INSERT INTO conversations (user_id, timestamp, user_input, ai_response) VALUES (%s, %s, %s, %s) RETURNING id",
-                (user_id, datetime.now(), user_input, ai_response)
+                "UPDATE users SET last_seen = %s WHERE id = %s",
+                (datetime.now(), user_id)
+            )
+            self.conn.commit()
+            cur.close()
+        except Exception as e:
+            print(f"❌ Failed to update last_seen: {e}")
+            self.conn.rollback()
+
+    def create_conversation(self, user_id: str, user_input: str, ai_response: str = None, audio_path: str = None) -> str:
+        try:
+            cur = self.conn.cursor()
+            cur.execute(
+                "INSERT INTO conversations (user_id, timestamp, user_input, ai_response, audio_path) VALUES (%s, %s, %s, %s, %s) RETURNING id",
+                (user_id, datetime.now(), user_input, ai_response, audio_path)
             )
             conv_id = cur.fetchone()[0]
             self.conn.commit()
@@ -83,6 +96,20 @@ class DatabaseService:
             print(f"❌ Failed to create conversation: {e}")
             self.conn.rollback()
             raise
+
+    def get_user_conversations(self, user_id: str, limit: int = 10):
+        try:
+            cur = self.conn.cursor(cursor_factory=RealDictCursor)
+            cur.execute(
+                "SELECT * FROM conversations WHERE user_id = %s ORDER BY timestamp DESC LIMIT %s",
+                (user_id, limit)
+            )
+            conversations = cur.fetchall()
+            cur.close()
+            return [dict(conv) for conv in conversations]
+        except Exception as e:
+            print(f"❌ Failed to get conversations: {e}")
+            return []
 
     def close(self):
         if self.conn:
