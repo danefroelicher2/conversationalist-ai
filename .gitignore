@@ -1,0 +1,13 @@
+.env
+venv/
+ENV/
+*.pyc
+__pycache__/
+storage/audio/*
+storage/video/*
+storage/snapshots/*
+!storage/*/.gitkeep
+models/*
+!models/.gitkeep
+.vscode/
+.DS_Store
