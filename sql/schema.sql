@@ -16,7 +16,7 @@ CREATE TABLE IF NOT EXISTS conversations (
     trigger_type VARCHAR(50),
     user_input TEXT,
     ai_response TEXT,
-    audio_file_path TEXT,
+    audio_path TEXT,
     video_file_path TEXT,
     metadata JSONB DEFAULT '{}'
 );
