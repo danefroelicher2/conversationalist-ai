@@ -11,7 +11,7 @@ def main():
     print("=" * 50)
     print()
 
-    # Initialize LLM Service
+    # Initialize LLM Servicee
     try:
         llm = LLMService()
     except Exception as e:
