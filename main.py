@@ -5,6 +5,7 @@ sys.path.append(str(Path(__file__).parent))
 from services.audio_service import AudioService
 from services.database_service import DatabaseService
 from services.llm_service import LLMService
+from services.tts_service import TTSService
 
 def main():
     print("=" * 50)
@@ -16,6 +17,7 @@ def main():
     audio = AudioService()
     db = DatabaseService()
     llm = LLMService()
+    tts = TTSService()
 
     print("👋 Hello! I'm your AI security assistant.")
     print("📝 I learn who you are by your voice.")
@@ -118,6 +120,9 @@ Respond naturally as their AI assistant."""
 
     print(f"💬 AI Response: {ai_response}\n")
 
+    # Speak the response
+    tts.speak(ai_response)
+
     # Store conversation
     conv_id = db.create_conversation(
         user_id=user_id,
@@ -141,6 +146,7 @@ Respond naturally as their AI assistant."""
     print("=" * 50)
 
     # Cleanup
+    tts.cleanup()
     audio.cleanup()
     db.close()
 
