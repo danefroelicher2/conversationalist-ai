@@ -41,38 +41,16 @@ class DatabaseService:
             self.conn.rollback()
             raise
 
-    def create_user(self, name: str) -> str:
+    def update_user_last_seen(self, user_id: int):
+        """Update the last_seen timestamp for a user.
+
+        Args:
+            user_id: Integer ID of the user
+        """
         try:
             cur = self.conn.cursor()
             cur.execute(
-                "INSERT INTO users (name, created_at, last_seen) VALUES (%s, %s, %s) RETURNING id",
-                (name, datetime.now(), datetime.now())
-            )
-            user_id = cur.fetchone()[0]
-            self.conn.commit()
-            cur.close()
-            return str(user_id)
-        except Exception as e:
-            print(f"❌ Failed to create user: {e}")
-            self.conn.rollback()
-            raise
-
-    def get_user_by_name(self, name: str) -> Optional[Dict]:
-        try:
-            cur = self.conn.cursor(cursor_factory=RealDictCursor)
-            cur.execute("SELECT * FROM users WHERE name ILIKE %s", (name,))
-            user = cur.fetchone()
-            cur.close()
-            return dict(user) if user else None
-        except Exception as e:
-            print(f"❌ Failed to get user: {e}")
-            return None
-
-    def update_user_last_seen(self, user_id: str):
-        try:
-            cur = self.conn.cursor()
-            cur.execute(
-                "UPDATE users SET last_seen = %s WHERE id = %s",
+                "UPDATE users SET last_seen = %s WHERE user_id = %s",
                 (datetime.now(), user_id)
             )
             self.conn.commit()
@@ -81,7 +59,18 @@ class DatabaseService:
             print(f"❌ Failed to update last_seen: {e}")
             self.conn.rollback()
 
-    def create_conversation(self, user_id: str, user_input: str, ai_response: str = None, audio_path: str = None) -> str:
+    def create_conversation(self, user_id: int, user_input: str, ai_response: str = None, audio_path: str = None) -> str:
+        """Create a new conversation record.
+
+        Args:
+            user_id: Integer ID of the user
+            user_input: User's input text
+            ai_response: AI's response text (optional)
+            audio_path: Path to audio file (optional)
+
+        Returns:
+            String representation of the conversation ID
+        """
         try:
             cur = self.conn.cursor()
             cur.execute(
@@ -97,7 +86,16 @@ class DatabaseService:
             self.conn.rollback()
             raise
 
-    def get_user_conversations(self, user_id: str, limit: int = 10):
+    def get_user_conversations(self, user_id: int, limit: int = 10):
+        """Get conversation history for a user.
+
+        Args:
+            user_id: Integer ID of the user
+            limit: Maximum number of conversations to return (default: 10)
+
+        Returns:
+            List of conversation dictionaries
+        """
         try:
             cur = self.conn.cursor(cursor_factory=RealDictCursor)
             cur.execute(
