@@ -13,7 +13,7 @@ def main():
     print("=" * 50)
     print()
 
-    # Initialize servicess
+    # Initialize services
     audio = AudioService()
     db = DatabaseService()
     llm = LLMService()

@@ -21,15 +21,14 @@ CREATE TABLE IF NOT EXISTS conversations (
     metadata JSONB DEFAULT '{}'
 );
 
-CREATE TABLE IF NOT EXISTS events (
-    id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    timestamp TIMESTAMP DEFAULT NOW(),
-    event_type VARCHAR(50),
-    location VARCHAR(100),
-    confidence FLOAT,
-    user_id UUID REFERENCES users(id),
-    conversation_id UUID REFERENCES conversations(id),
-    snapshot_path TEXT,
+CREATE TABLE IF NOT EXISTS users (
+    user_id INTEGER PRIMARY KEY,
+    password_hash VARCHAR(255) NOT NULL,
+    created_at TIMESTAMP DEFAULT NOW(),
+    last_seen TIMESTAMP,
+    failed_attempts INTEGER DEFAULT 0,
+    voice_embedding BYTEA,
+    face_embedding BYTEA,
     metadata JSONB DEFAULT '{}'
 );
 
