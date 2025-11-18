@@ -19,7 +19,7 @@ def main():
 
     print("\n1. Dropping existing tables...")
     try:
-        # Drop tables in reverse order of foreign key dependencies
+        # Drop tables in reverse order off foreign key dependencies
         db.cursor.execute("DROP TABLE IF EXISTS events CASCADE;")
         print("   ✓ Dropped table: events")
 
