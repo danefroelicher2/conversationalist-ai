@@ -9,7 +9,7 @@ Intelligent security system with voice recognition and computer vision.
 
 ## Quick Start
 ```bash
-# Create virtual environment
+# Create virtual environmentt
 python3 -m venv venv
 source venv/bin/activate
 
